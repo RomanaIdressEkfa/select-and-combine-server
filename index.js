@@ -18,25 +18,27 @@
 
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000;
 const ObjectId = require('mongodb').ObjectId;
-
+//middleware
 app.use(cors());
 app.use(express.json());
 
 
 
-const uri = "mongodb+srv://selectCombine:XujH51GEUyPDKsQb@cluster0.wxf10oe.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wxf10oe.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
 async function run() {
     try {
         await client.connect();
+        const foodVegetablesCollection = client.db("food").collection("vegetables");
+        const snacksDataCollection = client.db("snacks").collection("snacksCollection");
         const dataCollection = client.db("test").collection("devices");
-
 
         // //user pabo khuje...
         // app.get('/user', async (req, res) => {
@@ -46,13 +48,11 @@ async function run() {
         //     res.send(users);
         // })
 
-
-
-        // //user post kora..
-        // app.post('/user', async (req, res) => {
+        // // //user post kora..
+        // app.post('/foods', async (req, res) => {
         //     const newUser = req.body;
         //     console.log(newUser);
-        //     const result = await dataCollection.insertOne(newUser);
+        //     const result = await foodVegetablesCollection.insertOne(newUser);
         //     res.send(result)
         // })
 
@@ -85,10 +85,8 @@ async function run() {
 run().catch(console.dir);
 
 
-
-
 app.get('/', (req, res) => {
-    res.send('hello world')
+    res.send('Welcome to our select and combine server site')
 })
 app.listen(port, () => {
     console.log('Starting');
